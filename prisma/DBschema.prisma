@@ -1,0 +1,55 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+// prisma/schema.prisma
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL") // from .env
+}
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+model User {
+  id        String   @id @default(uuid())
+  email     String   @unique
+  name      String?
+  provider  String   // "google" | "github"
+  createdAt DateTime @default(now())
+
+  analyses  Analysis[]
+}
+
+model Analysis {
+  id        String   @id @default(uuid())
+  name      String
+  createdAt DateTime @default(now())
+  userId    String
+  user      User     @relation(fields: [userId], references: [id])
+
+  files     File[]
+  findings  Finding[]
+}
+
+model File {
+  id          String   @id @default(uuid())
+  filename    String
+  filetype    String
+  storagePath String   // path/URL to storage (e.g., S3 bucket)
+  createdAt   DateTime @default(now())
+  analysisId  String
+  analysis    Analysis @relation(fields: [analysisId], references: [id])
+}
+
+model Finding {
+  id          String   @id @default(uuid())
+  content     String   // insights, key findings
+  maskedFile  String?  // optional link to masked file
+  createdAt   DateTime @default(now())
+  analysisId  String
+  analysis    Analysis @relation(fields: [analysisId], references: [id])
+}
