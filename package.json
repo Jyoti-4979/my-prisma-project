@@ -4,8 +4,8 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-  "start": "npx prisma migrate deploy --schema=./prisma/DBschema.prisma && node server.js"
-  },
+  "start": "npx prisma migrate deploy && node server.js"
+},
   "keywords": [],
   "author": "",
   "license": "ISC",
